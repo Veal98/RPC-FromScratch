@@ -4,7 +4,7 @@
 
 ## 💌 写在前面
 
-写这个 RPC 框架主要是为了**通过造轮子的方式来学习**，深入理解 RPC 框架的底层原理。相比简历上一律的 xxxx 系统，造轮子很显然更能赢得面试官的青睐 💖
+本项目基于 Spring + Netty + Zookeeper + Protostuff 从零开始设计实现一个轻量级的分布式 RPC 框架，内含详细设计思路以及开发教程，**通过造轮子的方式来学习**，深入理解 RPC 框架的底层原理。相比简历上一律的 xxxx 系统，造轮子很显然更能赢得面试官的青睐 💖
 
 当然，大家在实际项目中少造轮子，尽量去用现成的优秀框架
 
@@ -69,8 +69,6 @@ ZooKeeper 为我们提供了高可用、高性能、稳定的分布式数据一�
 JDK 自带的序列化，只需实现 `java.io.Serializable`接口即可，不过这种方式不推荐，因为不支持跨语言调用并且性能比较差。
 
 比较常见的序列化框架：Kryo、hessian、protostuff 等
-
-👍 推荐 Kryo
 
 ### 4. 动态代理
 
@@ -140,15 +138,16 @@ RPC 的主要目的就是让我们调用远程方法像调用本地方法一样�
 
 ## ✅ 功能列表
 
-- [ ] 🍎 使用 Spring 提供依赖注入与参数配置（集成 Spring 通过注解注册服务）
-- [ ] 🍎 使用 Netty 进行网络传输
-  - [ ] 🍑 基于 JDK 动态代理机制 实现消息对象的序列化/反序列化
-    - [ ] 🍋 可优化：基于 开源的序列化框架 Kryo 实现消息对象的序列化/反序列化
-  - [ ] 🍑 自定义编解码器
-  - [ ] 🍑 Netty / TCP 心跳机制
+- [x] 🍎 使用 Spring 提供依赖注入与参数配置（集成 Spring 通过注解注册服务）
+- [x] 🍎 使用 Netty 进行网络传输
+  - [x] 🍑 基于 开源的序列化框架 Protostuff 实现消息对象的序列化/反序列化
+    - [ ] 🍋 可优化：用户通过配置文件指定序列化方式
+  - [x] 🍑 自定义编解码器
+  - [x] 🍑 Netty / TCP 心跳机制
     - [ ] 🍋 可优化：自定义应用层的 Netty 心跳机制
-  - [ ] 🍑 使用 CGLIB 动态代理调用远程方法
-- [ ] 🍎 使用 Zookeeper（ZkClient 客户端）实现服务注册和发现
+  - [x] 🍑 使用 JDK 动态代理机制调用远程方法
+    - [ ] 🍋 可优化：使用 CGLIB 动态代理调用远程方法
+- [x] 🍎 使用 Zookeeper（ZkClient 客户端）实现服务注册和发现
 
 ## 🎃 项目模块概览
 
@@ -437,4 +436,19 @@ public class HelloClient {
 }
 ```
 
-## 📖 完整教程
+## 🎨 完整教程
+
+关于本框架的详细教程放在 CSDN 的专栏里，**从零开始，手把手教你如何开发本框架**。目前尚在更新中...
+
+<img src="https://gitee.com/veal98/images/raw/master/img/20201219223230.png" style="zoom:67%;" />
+
+地址在此：<u>[飞天小牛肉 - 👊 从零开始设计一个轻量级的分布式 RPC 框架 - CSDN 专栏 ](https://blog.csdn.net/qq_41133986/category_10674495.html)</u>
+
+**小白专属**，大佬勿喷，逻辑并不难，对 Netty 和 RPC 较熟悉的大 🔥 直接上手撸代码就行
+
+> 🎉 最后再推广一波我自己的学习笔记仓库 👍 <u>[CS-Wiki（Gitee 推荐项目）](https://gitee.com/veal98/CS-Wiki)</u>：面向全栈，致力于构建完善的知识体系：数据结构、计算机网络、操作系统、算法、数据库、前端、Java、Python、机器学习、深度学习、强化学习
+
+## 📚 参考资料
+
+- [黄勇 / rpc](https://gitee.com/huangyong/rpc)
+- [SnailClimb / guide-rpc-framework](https://gitee.com/SnailClimb/guide-rpc-framework)
