@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/NettyRPC.iml" filepath="$PROJECT_DIR$/.idea/NettyRPC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-client/rpc-client.iml" filepath="$PROJECT_DIR$/rpc-client/rpc-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-common/rpc-common.iml" filepath="$PROJECT_DIR$/rpc-common/rpc-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-registry/rpc-registry.iml" filepath="$PROJECT_DIR$/rpc-registry/rpc-registry.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-registry-zookeeper/rpc-registry-zookeeper.iml" filepath="$PROJECT_DIR$/rpc-registry-zookeeper/rpc-registry-zookeeper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-sample-api/rpc-sample-api.iml" filepath="$PROJECT_DIR$/rpc-sample-api/rpc-sample-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-sample-client/rpc-sample-client.iml" filepath="$PROJECT_DIR$/rpc-sample-client/rpc-sample-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-sample-server/rpc-sample-server.iml" filepath="$PROJECT_DIR$/rpc-sample-server/rpc-sample-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rpc-server/rpc-server.iml" filepath="$PROJECT_DIR$/rpc-server/rpc-server.iml" />
+    </modules>
+  </component>
+</project>
