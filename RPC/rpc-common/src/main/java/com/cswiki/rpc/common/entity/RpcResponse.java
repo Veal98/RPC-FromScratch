@@ -6,7 +6,7 @@ package com.cswiki.rpc.common.entity;
  */
 public class RpcResponse {
 
-    private String requestId;
+    private String requestId; // 表示对该 requestId 的请求进行响应
     private Exception exception;
     private Object result;
 

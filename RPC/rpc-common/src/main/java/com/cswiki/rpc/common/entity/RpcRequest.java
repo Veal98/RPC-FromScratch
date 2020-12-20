@@ -6,7 +6,7 @@ package com.cswiki.rpc.common.entity;
  */
 public class RpcRequest {
 
-    private String requestId; // 请求的Id
+    private String requestId; // 请求的Id, 唯一标识该请求
     private String interfaceName; // 接口名称
     private String serviceVersion; // 版本
     private String methodName; // 方法名称

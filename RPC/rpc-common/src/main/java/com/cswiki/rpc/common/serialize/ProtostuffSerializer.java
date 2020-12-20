@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProtostuffSerializer {
 
-    // 缓存Schema
+    // 缓存 Schema
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
 
     // 使用 Objenesis 来实例化对象，它比 Java 反射更加强大
