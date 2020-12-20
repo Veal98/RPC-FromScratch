@@ -18,8 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProtostuffSerializer {
 
+    // 缓存Schema
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
 
+    // 使用 Objenesis 来实例化对象，它比 Java 反射更加强大
     private static Objenesis objenesis = new ObjenesisStd(true);
 
     private ProtostuffSerializer() {
@@ -47,7 +49,8 @@ public class ProtostuffSerializer {
      */
     public static <T> T deserialize(byte[] data, Class<T> cls) {
         try {
-            T message = objenesis.newInstance(cls);
+            // 使用 Objenesis 来实例化对象，它比 Java 反射更加强大
+            T message = objenesis.newInstance(cls); // cls.newInstance()
             Schema<T> schema = getSchema(cls);
             ProtostuffIOUtil.mergeFrom(data, message, schema);
             return message;
