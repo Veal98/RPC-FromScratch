@@ -15,6 +15,7 @@
 
     <!--配置服务注册组件 Zookeeper-->
     <bean id = "serviceRegistry" class="com.cswiki.rpc.registry.zookeeper.ZooKeeperServiceRegistry">
+        <!--注册中心地址 127.0.0.1:2181-->
         <constructor-arg name="zkAddress" value="${rpc.registry_address}"></constructor-arg>
     </bean>
 
@@ -22,7 +23,7 @@
     <bean id = "rpcServer" class="com.cswiki.rpc.server.RpcServer">
         <!--服务地址 127.0.0.1:8000-->
         <constructor-arg name = "serviceAddress" value="${rpc.service_address}"></constructor-arg>
-        <!--注册中心地址 127.0.0.1:2181-->
+        <!--注册中心 Zookeeper-->
         <constructor-arg name= "serviceRegistry" ref = "serviceRegistry"></constructor-arg>
     </bean>
 

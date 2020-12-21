@@ -31,6 +31,17 @@ public class RpcProxy {
         this.serviceDiscovery = serviceDiscovery;
     }
 
+    /**
+     * 使用 JDK 动态代理机制 创建客户端请求服务的动态代理对象
+     * 适用于一个接口对应一个实现类的情况
+     * @param interfaceClass 暴露服务的接口类型
+     * @param <T>
+     * @return
+     *
+     * 使用示例：
+     *  RpcProxy rpcProxy = context.getBean(RpcProxy.class);
+     *  HelloService helloServiceImpl2 = rpcProxy.create(HelloService.class, "helloServiceImpl2");
+     */
     @SuppressWarnings("unchecked")
     public <T> T create(final Class<?> interfaceClass) {
         return create(interfaceClass, "");
@@ -38,10 +49,15 @@ public class RpcProxy {
 
     /**
      * 使用 JDK 动态代理机制 创建客户端请求服务的动态代理对象
-     * @param interfaceClass
-     * @param serviceVersion
+     * 适用于一个接口对应多个实现类的情况（此时实现类需指定版本）
+     * @param interfaceClass 暴露服务的接口类型
+     * @param serviceVersion 暴露服务（实现类）的版本
      * @param <T>
-     * @return
+     * @return 返回暴露服务的实例
+     *
+     * 使用示例：
+     *  RpcProxy rpcProxy = context.getBean(RpcProxy.class);
+     *  HelloService helloService2 = rpcProxy.create(HelloService.class, "sample.hello2");
      */
     @SuppressWarnings("unchecked")
     public <T> T create(final Class<?> interfaceClass, final String serviceVersion) {

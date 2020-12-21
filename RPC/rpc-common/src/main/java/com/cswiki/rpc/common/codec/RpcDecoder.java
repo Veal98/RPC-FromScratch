@@ -5,18 +5,16 @@ import com.cswiki.rpc.common.serialize.ProtostuffSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-
 import java.util.List;
-
 
 /**
  * 解码器
  */
 public class RpcDecoder extends ByteToMessageDecoder {
 
-
     private Class<?> genericClass; // 字节序列反序列化成该类型的对象
 
+    // 调用方法示例：new RpcDecoder(RpcResponse.class)
     public RpcDecoder(Class<?> genericClass) {
         this.genericClass = genericClass;
     }
@@ -34,12 +32,13 @@ public class RpcDecoder extends ByteToMessageDecoder {
         if(in.readableBytes() < 4){
             return;
         }
-        // 标记当前readIndex的位置，以便后面重置readIndex 的时候使用
+        // 标记当前readIndex的位置，以便后面重置 readIndex 的时候使用
         in.markReaderIndex();
-        // 读取消息体（消息的长度）
+        // 读取消息体（消息的长度）. readInt 操作会增加 readerIndex
         int dataLength = in.readInt();
         // 如果可读字节数小于消息长度，说明是不完整的消息
         if(in.readableBytes() < dataLength){
+            // 对于不完整的消息我们没有必要继续读下去，所以此处对 readerIndex 进行重置
             in.resetReaderIndex();
             return;
         }

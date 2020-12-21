@@ -20,7 +20,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcServerHandler.class);
 
-    // 存放 服务名称 与 服务对象 之间的映射关系
+    // 存放 服务名称（被暴露的实现类的接口名称） 与 服务对象（被暴露的实现类） 之间的映射关系
     private final Map<String, Object> handlerMap;
 
     public RpcServerHandler(Map<String, Object> handlerMap) {
@@ -31,9 +31,9 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     public void channelRead0(final ChannelHandlerContext ctx, RpcRequest request) throws Exception {
         // 创建并初始化 RPC 响应对象
         RpcResponse response = new RpcResponse();
-        response.setRequestId(request.getRequestId());
+        response.setRequestId(request.getRequestId()); // 指定该 response 对应的 request id
         try {
-            Object result = handle(request);
+            Object result = handle(request); // 核心处理方法 ↓
             response.setResult(result);
         } catch (Exception e) {
             LOGGER.error("handle result failure", e);
@@ -44,13 +44,12 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     }
 
     /**
-     * 处理请求（根据客户端请求的方法和参数，通过反射进行调用）
+     * 处理请求（获取客户端请求的方法和参数，通过反射进行调用）
      * @param request
      * @return
      * @throws Exception
      */
     private Object handle(RpcRequest request) throws Exception {
-        // 获取服务对象
         String serviceName = request.getInterfaceName();
         String serviceVersion = request.getServiceVersion();
         if(serviceVersion != null){
@@ -59,6 +58,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
                 serviceName += "-" + serviceVersion;
             }
         }
+        // 获取服务对象
         Object serviceBean = handlerMap.get(serviceName);
         if (serviceBean == null) {
             throw new RuntimeException(String.format("can not find service bean by key: %s", serviceName));

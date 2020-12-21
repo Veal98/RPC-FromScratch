@@ -32,18 +32,22 @@ import java.util.Map;
  */
 public class RpcServer implements ApplicationContextAware, InitializingBean {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcServer.class);
 
-    // 服务地址（方法地址）
+    // 服务地址（比如服务被暴露在 Netty 的 8000 端口，服务地址就是 127.0.0.1:8000）
     private String serviceAddress;
 
-    // 注册服务
+    // 注册服务组件（Zookeeper）
     private ServiceRegistry  serviceRegistry;
 
-    // 存放 服务名称 与 服务对象 之间的映射关系
+    // 存放 服务名称（被暴露的实现类的接口名称） 与 服务对象（被暴露的实现类） 之间的映射关系
     private Map<String, Object> handlerMap = new HashMap<>();
 
+
+    /**
+     * 下面的这两个构造函数用于提供给用户在 Spring 配置文件中通过构造函数进行注入
+     * @param serviceAddress
+     */
     public RpcServer(String serviceAddress) {
         this.serviceAddress = serviceAddress;
     }
@@ -53,22 +57,23 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         this.serviceRegistry = serviceRegistry;
     }
 
-
     /**
      * Spring 容器在加载的时候会自动调用一次 setApplicationContext, 并将上下文 ApplicationContext 传递给这个方法
+     * 该方法的作用就是获取带有 @RpcSerivce 注解的类的 value (被暴露的实现类的接口名称) 和 version (被暴露的实现类的版本号，默认为 “”)
      * @param applicationContext
      * @throws BeansException
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        // 扫描所有带有 RpcSerivce 注解的类
+        // 扫描所有带有 @RpcSerivce 注解的类
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcService.class);
         if(MapUtils.isNotEmpty(serviceBeanMap)){
             for(Object serviceBean : serviceBeanMap.values()){
+                // 获取类上的注解 @RpcService
                 RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
-                // 添加了 RpcSerivce 注解的类的名称（服务名称）
+                // 获取注解 @RpcService 的 value（即被暴露的实现类的接口名称）
                 String serviceName = rpcService.value().getName();
-                // 添加了 RpcSerivce 注解的类的版本号（服务版本号）
+                // 获取注解 @RpcService 的 version（即被暴露的实现类的版本号，默认为 “”）
                 String serviceVersion = rpcService.version();
                 // 判断服务版本号是否非空
                 if(serviceVersion != null){
@@ -85,6 +90,8 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
     /**
      * 在初始化 Bean 的时候会自动执行该方法
+     * 该方法的目标就是启动 Netty 服务器进行服务端和客户端的通信，接收并处理客户端发来的请求,
+     * 并且还要将服务名称和服务地址注册进 Zookeeper（注册中心）
      * @throws Exception
      */
     @Override
@@ -108,15 +115,15 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
             // TPC 协议的心跳机制
             bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-            // 获取 RPC 服务器的 IP 地址与端口号
+            // 获取服务地址与端口号
             String[] addressArray = StringUtils.split(serviceAddress, ":");
             String ip = addressArray[0];
             int port = Integer.parseInt(addressArray[1]);
             // 启动 RPC 服务器
             ChannelFuture future = bootstrap.bind(ip, port).sync();
-            // 注册 RPC 服务地址
+            // 将被暴露的服务(实现类)名称及其服务地址注册进 Zookeeper（注册与发现中心）
             if (serviceRegistry != null) {
-                for (String interfaceName : handlerMap.keySet()) {
+                for (String interfaceName : handlerMap.keySet()) { // Map.KeySet() 获取 Map 的全部 Key 值
                     serviceRegistry.register(interfaceName, serviceAddress);
                     LOGGER.info("register service: {} => {}", interfaceName, serviceAddress);
                 }

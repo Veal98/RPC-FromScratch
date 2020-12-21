@@ -11,8 +11,9 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class RpcEncoder extends MessageToByteEncoder {
 
-    private Class<?> genericClass; // 代编码的对象
+    private Class<?> genericClass; // 待编码的对象类型
 
+    // 调用方法示例：new RpcEncoder(RpcRequest.class)
     public RpcEncoder(Class<?> genericClass) {
         this.genericClass = genericClass;
     }
