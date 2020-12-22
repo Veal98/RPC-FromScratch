@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * RPC 客户端（用于发送 RPC 请求）
+ * RPC 客户端（建立连接并发送 RPC 请求）
  */
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
@@ -41,6 +41,12 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
         this.response = response;
     }
 
+    /**
+     * 发生异常时此方法被调用
+     * @param ctx
+     * @param cause
+     * @throws Exception
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         LOGGER.error("api caught exception", cause);
@@ -48,10 +54,10 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     }
 
     /**
-     * 客户端发送 RPC 请求给服务端
-     * 该方法在 RpcProxy 中调用
+     * 客户端建立连接并发送 RPC 请求给服务端
+     * 该方法在代理类 RpcProxy 中调用（通过代理对此方法进行增强，屏蔽远程方法调用的细节）
      * @param request
-     * @return
+     * @return 返回服务端响应该请求的的 RPC 响应对象
      * @throws Exception
      */
     public RpcResponse send(RpcRequest request) throws Exception {

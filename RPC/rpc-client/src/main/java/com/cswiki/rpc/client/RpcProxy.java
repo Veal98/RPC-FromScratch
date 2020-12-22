@@ -23,18 +23,28 @@ public class RpcProxy {
 
     private ServiceDiscovery serviceDiscovery;
 
+    /**
+     * 该构造函数用于提供给用户通过配置文件注入服务地址
+     * @param serviceAddress
+     */
     public RpcProxy(String serviceAddress) {
         this.serviceAddress = serviceAddress;
     }
 
+    /**
+     * 该构造函数用于提供给用户通过配置文件注入服务发现组件
+     * @param serviceDiscovery
+     */
     public RpcProxy(ServiceDiscovery serviceDiscovery) {
         this.serviceDiscovery = serviceDiscovery;
     }
 
     /**
+     * 该方法用于对 send 方法进行增强，屏蔽远程方法调用的细节
+     *
      * 使用 JDK 动态代理机制 创建客户端请求服务的动态代理对象
      * 适用于一个接口对应一个实现类的情况
-     * @param interfaceClass 暴露服务的接口类型
+     * @param interfaceClass 服务的接口类型
      * @param <T>
      * @return
      *
@@ -48,12 +58,14 @@ public class RpcProxy {
     }
 
     /**
-     * 使用 JDK 动态代理机制 创建客户端请求服务的动态代理对象
+     * 该方法用于对 send 方法进行增强，屏蔽远程方法调用的细节
+     *
+     * 创建客户端请求服务的动态代理对象，通过代理对象来传输网络请求
      * 适用于一个接口对应多个实现类的情况（此时实现类需指定版本）
-     * @param interfaceClass 暴露服务的接口类型
-     * @param serviceVersion 暴露服务（实现类）的版本
+     * @param interfaceClass 服务的接口类型
+     * @param serviceVersion 服务（实现类）的版本
      * @param <T>
-     * @return 返回暴露服务的实例
+     * @return 返回服务的实例
      *
      * 使用示例：
      *  RpcProxy rpcProxy = context.getBean(RpcProxy.class);
@@ -61,7 +73,7 @@ public class RpcProxy {
      */
     @SuppressWarnings("unchecked")
     public <T> T create(final Class<?> interfaceClass, final String serviceVersion) {
-        // 创建动态代理对象
+        // 使用 JDK 动态代理机制创建动态代理对象
         return (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
                 new Class<?>[]{interfaceClass},
@@ -76,8 +88,8 @@ public class RpcProxy {
                         request.setMethodName(method.getName());
                         request.setParameterTypes(method.getParameterTypes());
                         request.setParameters(args);
-                        // 获取 RPC 服务地址
                         if (serviceDiscovery != null) {
+                            // 获取服务名称（被暴露的实现类的接口名称）和版本号
                             String serviceName = interfaceClass.getName();
                             if(serviceVersion != null){
                                 String service_Version = serviceVersion.trim();
@@ -85,6 +97,7 @@ public class RpcProxy {
                                     serviceName += "-" + service_Version;
                                 }
                             }
+                            // 获取服务地址
                             serviceAddress = serviceDiscovery.discover(serviceName);
                             LOGGER.info("discover service: {} => {}", serviceName, serviceAddress);
                         }
@@ -94,15 +107,18 @@ public class RpcProxy {
                                 throw new RuntimeException("server address is empty");
                             }
                         }
-                        // 从 RPC 服务地址中解析主机名与端口号
+
+                        // 从服务地址中解析主机名与端口号
                         String[] array = StringUtils.split(serviceAddress, ":");
                         String host = array[0];
                         int port = Integer.parseInt(array[1]);
-                        // 创建 RPC 客户端对象并发送 RPC 请求
+                        // 创建 RPC 客户端对象
                         RpcClient client = new RpcClient(host, port);
                         long time = System.currentTimeMillis(); // 当前事件
-                        RpcResponse response = client.send(request); // 发送 RPC 请求
+                        // 通过动态代理对象发送 RPC 请求
+                        RpcResponse response = client.send(request);
                         LOGGER.info("time: {}ms", System.currentTimeMillis() - time);
+
                         if (response == null) {
                             throw new RuntimeException("response is null");
                         }

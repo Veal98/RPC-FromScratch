@@ -501,7 +501,7 @@ public class HelloClient {
 - [x] 📖 前置知识点：Java 注解
 - [x] 🌈 框架代码分析：Netty / RPC 服务端
 - [x] 📖 前置知识点：静态代理 + JDK / CGLIB / Javassit 动态代理
-- [ ] 🌈 框架代码分析：Netty / RPC 客户端
+- [x] 🌈 框架代码分析：Netty / RPC 客户端
 
 ## 📚 参考资料
 
