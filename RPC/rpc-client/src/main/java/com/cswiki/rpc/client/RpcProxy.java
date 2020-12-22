@@ -3,6 +3,9 @@ package com.cswiki.rpc.client;
 import com.cswiki.rpc.common.entity.RpcRequest;
 import com.cswiki.rpc.common.entity.RpcResponse;
 import com.cswiki.rpc.registry.ServiceDiscovery;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -73,8 +76,69 @@ public class RpcProxy {
      */
     @SuppressWarnings("unchecked")
     public <T> T create(final Class<?> interfaceClass, final String serviceVersion) {
-        // 使用 JDK 动态代理机制创建动态代理对象
-        return (T) Proxy.newProxyInstance(
+
+        // 使用 CGLIB 动态代理机制创建代理对象
+        Enhancer enhancer = new Enhancer();
+        enhancer.setClassLoader(interfaceClass.getClassLoader());
+        enhancer.setSuperclass(interfaceClass);
+        enhancer.setCallback(new MethodInterceptor() {
+            @Override
+            public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+                // 创建 RPC 请求对象并设置请求属性
+                RpcRequest request = new RpcRequest();
+                request.setRequestId(UUID.randomUUID().toString());
+                request.setInterfaceName(method.getDeclaringClass().getName());
+                request.setServiceVersion(serviceVersion);
+                request.setMethodName(method.getName());
+                request.setParameterTypes(method.getParameterTypes());
+                request.setParameters(args);
+                if (serviceDiscovery != null) {
+                    // 获取服务名称（被暴露的实现类的接口名称）和版本号
+                    String serviceName = interfaceClass.getName();
+                    if(serviceVersion != null){
+                        String service_Version = serviceVersion.trim();
+                        if(!StringUtils.isEmpty(service_Version)){
+                            serviceName += "-" + service_Version;
+                        }
+                    }
+                    // 获取服务地址
+                    serviceAddress = serviceDiscovery.discover(serviceName);
+                    LOGGER.info("discover service: {} => {}", serviceName, serviceAddress);
+                }
+                if(serviceAddress != null){
+                    serviceAddress = serviceAddress.trim();
+                    if(StringUtils.isEmpty(serviceAddress)){
+                        throw new RuntimeException("server address is empty");
+                    }
+                }
+
+                // 从服务地址中解析主机名与端口号
+                String[] array = StringUtils.split(serviceAddress, ":");
+                String host = array[0];
+                int port = Integer.parseInt(array[1]);
+                // 创建 RPC 客户端对象
+                RpcClient client = new RpcClient(host, port);
+                long time = System.currentTimeMillis(); // 当前事件
+                // 通过动态代理对象发送 RPC 请求
+                RpcResponse response = client.send(request);
+                LOGGER.info("time: {}ms", System.currentTimeMillis() - time);
+
+                if (response == null) {
+                    throw new RuntimeException("response is null");
+                }
+                // 返回 RPC 响应结果
+                if (response.hasException()) {
+                    throw response.getException();
+                } else {
+                    return response.getResult();
+                }
+            }
+        });
+        return (T) enhancer.create();
+
+
+        // 使用 JDK 动态代理机制创建代理对象
+        /*return (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
                 new Class<?>[]{interfaceClass},
                 new InvocationHandler() {
@@ -130,7 +194,7 @@ public class RpcProxy {
                         }
                     }
                 }
-        );
+        );*/
     }
 }
 
