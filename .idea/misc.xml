@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/rpc-registry/pom.xml" />
+        <option value="$PROJECT_DIR$/rpc-client/pom.xml" />
+        <option value="$PROJECT_DIR$/rpc-server/pom.xml" />
+        <option value="$PROJECT_DIR$/rpc-common/pom.xml" />
+        <option value="$PROJECT_DIR$/rpc-sample-client/pom.xml" />
+        <option value="$PROJECT_DIR$/rpc-sample-server/pom.xml" />
+        <option value="$PROJECT_DIR$/rpc-sample-api/pom.xml" />
+      </list>
+    </option>
+  </component>
+</project>

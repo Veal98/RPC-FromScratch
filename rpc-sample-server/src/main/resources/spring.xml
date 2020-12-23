@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--对 rpc.sample.server 这个包进行扫描-->
+    <context:component-scan base-package="com.cswiki.rpc.sample.server"></context:component-scan>
+
+    <!--服务器配置参数-->
+    <context:property-placeholder location="classpath:rpc.properties"></context:property-placeholder>
+
+    <!--配置服务注册组件 Zookeeper-->
+    <bean id = "serviceRegistry" class="com.cswiki.rpc.registry.zookeeper.ZookeeperServiceRegistry">
+        <!--注册中心地址 127.0.0.1:2181-->
+        <constructor-arg name="zkAddress" value="${rpc.registry_address}"></constructor-arg>
+    </bean>
+
+    <!--配置 RPC 服务器-->
+    <bean id = "rpcServer" class="com.cswiki.rpc.server.RpcServer">
+        <!--服务地址 127.0.0.1:8000-->
+        <constructor-arg name = "serviceAddress" value="${rpc.service_address}"></constructor-arg>
+        <!--注册中心 Zookeeper-->
+        <constructor-arg name= "serviceRegistry" ref = "serviceRegistry"></constructor-arg>
+    </bean>
+
+</beans>

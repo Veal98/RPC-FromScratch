@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:rpc.properties"/>
+
+    <!--服务发现组件-->
+    <bean id="serviceDiscovery" class="com.cswiki.rpc.registry.zookeeper.ZookeeperServiceDiscovery">
+        <constructor-arg name="zkAddress" value="${rpc.registry_address}"/>
+    </bean>
+
+    <!--RPC 客户端动态代理-->
+    <bean id="rpcProxy" class="com.cswiki.rpc.client.RpcProxy">
+        <constructor-arg name="serviceDiscovery" ref="serviceDiscovery"/>
+    </bean>
+
+</beans>
