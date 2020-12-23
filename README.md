@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # **🏆** 从零开始设计一个轻量级分布式 RPC 框架
+=======
+# 🏆 从零开始设计一个轻量级分布式 RPC 框架
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 
 ---
 
@@ -78,7 +82,11 @@ JDK 自带的序列化，只需实现 `java.io.Serializable`接口即可，不�
 
 RPC 的主要目的就是让我们调用远程方法像调用本地方法一样简单，我们不需要关心远程方法调用的细节比如网络传输。
 
+<<<<<<< HEAD
 **怎样才能屏蔽程方法调用的底层细节呢？答案就是动态代理**
+=======
+**怎样才能屏蔽程方法调用的底层细节呢？答案就是动态代理**：简单来说，当你调用远程方法的时候，实际是通过代理对象来传输网络请求，因为我们是无法直接调用远程方法的。
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 
 动态代理机制包括 JDK 动态代理、CGLIB 动态代理、Javassist 动态代理等
 
@@ -139,6 +147,7 @@ RPC 的主要目的就是让我们调用远程方法像调用本地方法一样�
 
 ## ✅ 功能列表
 
+<<<<<<< HEAD
 欢迎有兴趣的小伙伴提 PR 😊 ~
 
 - [x] 🍎 使用 Spring 提供依赖注入与参数配置
@@ -159,13 +168,34 @@ RPC 的主要目的就是让我们调用远程方法像调用本地方法一样�
 ## 🎃 项目模块概览
 
 <img src="https://gitee.com/veal98/images/raw/master/img/20201223205427.png" style="zoom:67%;" />
+=======
+- [x] 🍎 使用 Spring 提供依赖注入与参数配置（集成 Spring 通过注解注册服务）
+- [x] 🍎 使用 Netty 进行网络传输
+  - [x] 🍑 基于 开源的序列化框架 Protostuff 实现消息对象的序列化/反序列化
+    - [ ] 🍋 可优化：用户通过配置文件指定序列化方式
+  - [x] 🍑 自定义编解码器
+  - [x] 🍑 Netty / TCP 心跳机制
+    - [ ] 🍋 可优化：自定义应用层的 Netty 心跳机制
+  - [x] 🍑 使用 JDK 动态代理机制调用远程方法
+    - [ ] 🍋 可优化：使用 CGLIB 动态代理调用远程方法
+- [x] 🍎 使用 Zookeeper（ZkClient 客户端）实现服务注册和发现
+
+## 🎃 项目模块概览
+
+<img src="https://gitee.com/veal98/images/raw/master/img/20201217221624.png" style="zoom: 85%;" />
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 
 💧 **本框架的核心功能模块**：
 
 - `rpc-common`：包含封装 <u>RPC 请求与响应</u>（网络传输）的实体类/消息体 `entity`，Netty 编解码器 `codec` 以及序列化/反序列 `serialize`
 - `rpc-server`：Netty / RPC 服务端，处理并响应客户端的请求 / 消息体）
 - `rpc-client`：Netty / RPC 客户端，向服务端发送请求 / 消息体 + 接收服务端的响应
+<<<<<<< HEAD
 - `rpc-registry`：定义服务注册与发现行为的接口，以及接口的实现（基于 Zookeeper 及其客户端 ZkClient 实现服务的注册与发现）
+=======
+- `rpc-registry`：定义服务注册与发现行为的接口
+- `rpc-registry-zookeeper`：基于 Zookeeper 及其客户端 ZkClient 实现服务的注册与发现
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 
 💧 **下述这三个模块展示了如何使用本框架**：
 
@@ -242,7 +272,11 @@ public interface HelloService {
 实现该接口：
 
 ```java
+<<<<<<< HEAD
 @RpcService(interfaceName = HelloService.class) // 指定暴露服务的接口类型
+=======
+@RpcService(HelloService.class) // 指定暴露服务的接口类型
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 public class HelloServiceImple implements HelloService {
     
     @Override
@@ -260,9 +294,15 @@ public class HelloServiceImple implements HelloService {
 
 ```java
 /**
+<<<<<<< HEAD
  * HelloService 接口实现类 2（暴露该服务，需要指明 serviceVersion）
  */
 @RpcService(interfaceName = HelloService.class, serviceVersion = "helloServiceImpl2") // 指定暴露服务的接口类型和版本
+=======
+ * HelloService 接口实现类 2（暴露该服务，需要指明 version）
+ */
+@RpcService(value = HelloService.class, version = "helloServiceImpl2") // 指定暴露服务的接口类型和版本
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 public class HelloServiceImpl2 implements HelloService {
     @Override
     public String hello(String name) {
@@ -287,12 +327,17 @@ public class HelloServiceImpl2 implements HelloService {
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
+<<<<<<< HEAD
     <!--对 rpc.sample.server 这个包进行扫描-->
+=======
+    <!--对 rpc.sample.server 这个包进行扫描，也就是说在这个包中去寻找客户端请求的方法-->
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
     <context:component-scan base-package="com.cswiki.rpc.sample.server"></context:component-scan>
 
     <!--服务器配置参数-->
     <context:property-placeholder location="classpath:rpc.properties"></context:property-placeholder>
 
+<<<<<<< HEAD
     <!--配置服务注册组件 Zookeeper-->
     <bean id = "serviceRegistry" class="com.cswiki.rpc.registry.zookeeper.ZookeeperServiceRegistry">
         <!--注册中心地址 127.0.0.1:2181-->
@@ -304,6 +349,18 @@ public class HelloServiceImpl2 implements HelloService {
         <!--服务地址 127.0.0.1:8000-->
         <constructor-arg name = "serviceAddress" value="${rpc.service_address}"></constructor-arg>
         <!--注册中心 Zookeeper-->
+=======
+    <!--配置服务注册组件 Zookeeper, 需提供 ZooKeeper 地址、系统名、实例号-->
+    <bean id = "serviceRegistry" class="com.cswiki.rpc.registry.zookeeper.ZooKeeperServiceRegistry">
+        <constructor-arg name="zkAddress" value="${rpc.registry_address}"></constructor-arg>
+    </bean>
+
+    <!--配置 RPC 服务器, 用于发布 RPC 服务，需要提供服务器端口-->
+    <bean id = "rpcServer" class="com.cswiki.rpc.server.RpcServer">
+        <!--服务地址 127.0.0.1:8000-->
+        <constructor-arg name = "serviceAddress" value="${rpc.service_address}"></constructor-arg>
+        <!--注册中心地址 127.0.0.1:2181-->
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
         <constructor-arg name= "serviceRegistry" ref = "serviceRegistry"></constructor-arg>
     </bean>
 
@@ -409,12 +466,19 @@ public class RpcBootstrap {
 
     <context:property-placeholder location="classpath:rpc.properties"/>
 
+<<<<<<< HEAD
     <!--服务发现组件-->
     <bean id="serviceDiscovery" class="com.cswiki.rpc.registry.zookeeper.ZookeeperServiceDiscovery">
         <constructor-arg name="zkAddress" value="${rpc.registry_address}"/>
     </bean>
 
     <!--RPC 客户端动态代理-->
+=======
+    <bean id="serviceDiscovery" class="com.cswiki.rpc.registry.zookeeper.ZooKeeperServiceDiscovery">
+        <constructor-arg name="zkAddress" value="${rpc.registry_address}"/>
+    </bean>
+
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
     <bean id="rpcProxy" class="com.cswiki.rpc.client.RpcProxy">
         <constructor-arg name="serviceDiscovery" ref="serviceDiscovery"/>
     </bean>
@@ -491,8 +555,11 @@ public class HelloClient {
 
 > 🔊 其实各个模块的知识点远不止这些，比如 Java I/O 和 Netty，它们属于一个非常庞大的知识体系，如果真要细致入微的去讲解每个细节，😆 真的写不完，大 🔥 看完本专栏后还有不熟悉的可以去我的学习笔记网站 [🎪 CS-Wiki（Gitee 推荐项目）](https://gitee.com/veal98/CS-Wiki) 做进一步的学习。不需要看知识点的各位可直接看框架代码分析部分的文章。
 
+<<<<<<< HEAD
 🚨 **RPC 原理是重中之重**，大家在编码的时候一定要记住并清楚 RPC 原理，整个框架的逻辑都围绕它来展开
 
+=======
+>>>>>>> e319e207fbd71938dba849147f825c60ce9c4a27
 - [x] 📖 前置知识点：什么是 RPC 及其原理
 - [x] 📖 前置知识点：Dubbo 架构及工作原理
 - [x] 📖 前置知识点：SpringBoot + Dubbo + Zookeeper 搭建一个简单的分布式服务
